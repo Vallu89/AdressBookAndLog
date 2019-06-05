@@ -15,6 +15,11 @@ struct Uzytkownik {
     string email = "";
     string adres = "";
 };
+struct Logowanie {
+    int id = 0;
+    string login ;
+    string haslo ;
+};
 void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
 
     Uzytkownik uzytkownik;
@@ -124,7 +129,6 @@ void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy ) {
 
     plik.close();
 }
-
 void WyswietlUzytkownika( vector <Uzytkownik> uzytkownicy ) {
     if (uzytkownicy.size() == 0 )
         cout <<"Brak uzytkownikow\n"<<endl;
@@ -363,7 +367,7 @@ int main() {
     WczytajUzytkownikow(uzytkownicy);
     while(1) {
         system("cls");
-        cout<<"Ksiazka adresowa v.0.0.2"<<endl;
+        cout<<"Ksiazka adresowa v.0.0.3"<<endl;
         cout<<"-------------------------"<<endl;
         cout<<"1. Dodaj uzytkownika"<<endl;
         cout<<"2. Wyswietl uzytkownikow"<<endl;

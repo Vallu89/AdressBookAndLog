@@ -20,6 +20,12 @@ struct Logowanie {
     string login ;
     string haslo ;
 };
+void Rejestracja(){
+
+}
+void Logowanie(){
+
+}
 void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
 
     Uzytkownik uzytkownik;

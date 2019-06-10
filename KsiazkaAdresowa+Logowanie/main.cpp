@@ -52,7 +52,7 @@ void Rejestracja( vector <Logowanie> &zalogowani ){
     plik.close();
 
 }
-void Logowanie(){
+void Zaloguj(){
 
 }
 void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {

@@ -9,6 +9,7 @@ using namespace std;
 
 struct Uzytkownik {
     int id = 0;
+    int idLogujacego;
     string imie = "";
     string nazwisko = "";
     string nrTelefonu = "";
@@ -17,10 +18,38 @@ struct Uzytkownik {
 };
 struct Logowanie {
     int id = 0;
-    string login ;
-    string haslo ;
+    string login = "" ;
+    string haslo = "" ;
 };
-void Rejestracja(){
+void Rejestracja( vector <Logowanie> &zalogowani ){
+
+    Logowanie logowanie;
+    fstream plik;
+    string linia;
+
+    plik.open("logi.txt",ios::in);
+    if ( plik.good() == false )
+        ofstream plik( "logi.txt" );
+    while(getline(plik,linia)) {
+        logowanie.id ++;
+    }
+    plik.close();
+
+    cout << "Panel Rejestracji: " << endl;
+    cout << "-------------------\n" << endl;
+    cout << "Podaj Login: " << endl;
+    cin >> logowanie.login;
+    cout << "Podaj haslo: " << endl;
+    cin >> logowanie.haslo;
+
+    zalogowani.push_back( logowanie );
+    plik.open("logi.txt",ios::out | ios::app);
+
+    plik << logowanie.id<<"|";
+    plik << logowanie.login<<"|";
+    plik << logowanie.haslo<<"|"<<endl;
+
+    plik.close();
 
 }
 void Logowanie(){
@@ -369,6 +398,7 @@ int main() {
 
     char wybor;
     vector <Uzytkownik> uzytkownicy;
+    vector <Logowanie> zalogowani;
 
     WczytajUzytkownikow(uzytkownicy);
     while(1) {

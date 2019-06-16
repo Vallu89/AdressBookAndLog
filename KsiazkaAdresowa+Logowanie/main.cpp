@@ -129,7 +129,7 @@ void WczytajZalogowanych(vector <Logowanie> &zalogowani) {
     }
     plik.close();
 }
-void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
+void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy, int idZalogowanego ) {
 
     Uzytkownik uzytkownik;
     int id;
@@ -142,55 +142,58 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
     if ( plik.good() == false )
         ofstream plik( "baza.txt" );
     while(getline(plik,linia)) {
-        for( int i = 0 ; i < linia.length() ; i++ ) {
-            if( linia[i] != '|')
-                slowo += linia[i];
-            else if( linia[i] == '|' ) {
-                switch (numerSlowa) {
-                case 0 :
-                    tymczasoweId = slowo ;
-                    id = atoi(tymczasoweId.c_str());
-                    uzytkownik.id = id;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                case 1 :
-                    uzytkownik.imie = slowo;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                case 2:
-                    uzytkownik.nazwisko = slowo;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                case 3:
-                    uzytkownik.nrTelefonu = slowo;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                case 4:
-                    uzytkownik.email = slowo;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                case 5:
-                    uzytkownik.adres = slowo;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                case 6 :
-                    tymczasoweId = slowo ;
-                    id = atoi(tymczasoweId.c_str());
-                    uzytkownik.idLogujacego = id;
-                    slowo = "";
-                    numerSlowa++;
-                    break;
-                }
+        for (int k = 0 ; k < uzytkownicy.size(); k++) {
+            if (idZalogowanego == uzytkownicy[k].idLogujacego) {
+                for( int i = 0 ; i < linia.length() ; i++ ) {
+                    if( linia[i] != '|')
+                        slowo += linia[i];
+                    else if( linia[i] == '|' ) {
+                        switch (numerSlowa) {
+                        case 0 :
+                            tymczasoweId = slowo ;
+                            id = atoi(tymczasoweId.c_str());
+                            uzytkownik.id = id;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 1 :
+                            uzytkownik.imie = slowo;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 2:
+                            uzytkownik.nazwisko = slowo;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 3:
+                            uzytkownik.nrTelefonu = slowo;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 4:
+                            uzytkownik.email = slowo;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 5:
+                            uzytkownik.adres = slowo;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 6 :
+                            tymczasoweId = slowo ;
+                            id = atoi(tymczasoweId.c_str());
+                            uzytkownik.idLogujacego = id;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        }
 
+                    }
+                }
             }
         }
-
         uzytkownicy.push_back( uzytkownik );
         numerSlowa = 0;
 
@@ -478,6 +481,17 @@ void UsunUzytkownika (vector <Uzytkownik> &uzytkownicy){
     }
 
 }
+void MenuLogowania(vector <Logowanie> zalogowani ){
+    while(1) {
+        system( "cls");
+        cout<<"System logowania v.0.0.1"<<endl;
+        cout<<"-------------------------"<<endl;
+        cout<<"1. Logowanie"<<endl;
+        cout<<"2. rejestracja"<<endl;
+        cout<<"3. Zamknij program"<<endl;
+
+    }
+}
 int main() {
 
     char wybor;
@@ -485,16 +499,21 @@ int main() {
     vector <Logowanie> zalogowani;
     int idZalogowanego;
 
-    WczytajUzytkownikow(uzytkownicy);
+
+    WczytajZalogowanych( zalogowani);
+
+    WczytajUzytkownikow(uzytkownicy, idZalogowanego);
+    wylogowanie:
     while(1) {
         system("cls");
-        cout<<"Ksiazka adresowa v.0.0.3"<<endl;
+        cout<<"Ksiazka adresowa v.0.0.4"<<endl;
         cout<<"-------------------------"<<endl;
         cout<<"1. Dodaj uzytkownika"<<endl;
         cout<<"2. Wyswietl uzytkownikow"<<endl;
         cout<<"3. Wyszukaj uzytkownika"<<endl;
         cout<<"4. Edytuj uzytkownika"<<endl;
         cout<<"5. Usun uzytkownika"<<endl;
+        cout<<"6. Wyloguj"<<endl;
         cout<<"9. Zakoncz\n"<<endl;
 
 
@@ -521,6 +540,10 @@ int main() {
         case '5':
             system("cls");
             UsunUzytkownika(uzytkownicy);
+            break;
+         case '5':
+            system("cls");
+            goto wylogowanie;
             break;
         case '9':
             exit(0);

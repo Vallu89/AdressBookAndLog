@@ -481,15 +481,33 @@ void UsunUzytkownika (vector <Uzytkownik> &uzytkownicy){
     }
 
 }
-void MenuLogowania(vector <Logowanie> zalogowani ){
+void MenuLogowania(vector <Logowanie> zalogowani, int idZalogowanego ){
+
+    char wybor;
+
     while(1) {
         system( "cls");
         cout<<"System logowania v.0.0.1"<<endl;
         cout<<"-------------------------"<<endl;
         cout<<"1. Logowanie"<<endl;
-        cout<<"2. rejestracja"<<endl;
-        cout<<"3. Zamknij program"<<endl;
+        cout<<"2. Rejestracja"<<endl;
+        cout<<"9. Zamknij program"<<endl;
 
+        cin >> wybor;
+
+        switch(wybor) {
+        case '1':
+            system("cls");
+            Zaloguj(zalogowani, idZalogowanego);
+            break;
+        case '2':
+            system("cls");
+            Rejestracja(zalogowani);
+            system("pause");
+            break;
+        case '9':
+            exit(0);
+        }
     }
 }
 int main() {
@@ -501,9 +519,9 @@ int main() {
 
 
     WczytajZalogowanych( zalogowani);
-
     WczytajUzytkownikow(uzytkownicy, idZalogowanego);
     wylogowanie:
+    MenuLogowania( zalogowani, idZalogowanego );
     while(1) {
         system("cls");
         cout<<"Ksiazka adresowa v.0.0.4"<<endl;
@@ -541,7 +559,7 @@ int main() {
             system("cls");
             UsunUzytkownika(uzytkownicy);
             break;
-         case '5':
+         case '6':
             system("cls");
             goto wylogowanie;
             break;

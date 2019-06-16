@@ -52,7 +52,36 @@ void Rejestracja( vector <Logowanie> &zalogowani ){
     plik.close();
 
 }
-void Zaloguj(){
+int Zaloguj(vector <Logowanie> zalogowani, int idZalogowanego){
+
+    string login, haslo;
+
+    while(1){
+    system("cls");
+    cout << "Podaj login: "<<endl;
+    cin >> login;
+    cout << "Podaj haslo: "<<endl;
+    cin >>haslo;
+
+    if (zalogowani.size() == 0){
+        cout << "Brak zarejestrowanych uzytkownikow. Zarejestruj sie i sprobuj ponownie."<< endl;
+        Sleep(2000);
+    }
+    else {
+        for ( int i = 0; i < zalogowani.size(); i++) {
+            if (zalogowani[i].login == login && zalogowani[i].haslo == haslo) {
+                cout << "Logowanie pomyslne !"<<endl;
+                Sleep(5000);
+                goto zalogowany;
+            } else
+                cout <<" Login lub haslo bledne. Wpisz poprawne dane "<<endl;
+            }
+        }
+    }
+    zalogowany:
+        return idZalogowanego;
+}
+void WczytajZalogowanych(vector <Logowanie> &zalogowani){
 
 }
 void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
@@ -399,6 +428,7 @@ int main() {
     char wybor;
     vector <Uzytkownik> uzytkownicy;
     vector <Logowanie> zalogowani;
+    int idZalogowanego;
 
     WczytajUzytkownikow(uzytkownicy);
     while(1) {

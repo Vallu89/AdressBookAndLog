@@ -81,8 +81,51 @@ int Zaloguj(vector <Logowanie> zalogowani, int idZalogowanego){
     zalogowany:
         return idZalogowanego;
 }
-void WczytajZalogowanych(vector <Logowanie> &zalogowani){
+void WczytajZalogowanych(vector <Logowanie> &zalogowani) {
 
+    Logowanie logowanie;
+    int id;
+    int numerSlowa = 0;
+    string linia,tymczasoweId;
+    fstream plik;
+    string slowo;
+
+    plik.open("logi.txt",ios::in);
+    if ( plik.good() == false )
+        ofstream plik( "logi.txt" );
+    while(getline(plik,linia)) {
+        for( int i = 0 ; i < linia.length() ; i++ ) {
+            if( linia[i] != '|')
+                slowo += linia[i];
+            else if( linia[i] == '|' ) {
+                switch (numerSlowa) {
+                case 0 :
+                    tymczasoweId = slowo ;
+                    id = atoi(tymczasoweId.c_str());
+                    logowanie.id = id;
+                    slowo = "";
+                    numerSlowa++;
+                    break;
+                case 1 :
+                    logowanie.login = slowo;
+                    slowo = "";
+                    numerSlowa++;
+                    break;
+                case 2:
+                    logowanie.haslo = slowo;
+                    slowo = "";
+                    numerSlowa++;
+                    break;
+                }
+
+            }
+        }
+
+        zalogowani.push_back( logowanie );
+        numerSlowa = 0;
+
+    }
+    plik.close();
 }
 void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
 

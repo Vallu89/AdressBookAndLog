@@ -9,15 +9,15 @@ using namespace std;
 
 struct Uzytkownik {
     int id = 0;
-    int idLogujacego;
     string imie = "";
     string nazwisko = "";
     string nrTelefonu = "";
     string email = "";
     string adres = "";
+    int idLogujacego = 0;
 };
 struct Logowanie {
-    int id = 0;
+    int id = 1;
     string login = "" ;
     string haslo = "" ;
 };
@@ -27,9 +27,8 @@ void Rejestracja( vector <Logowanie> &zalogowani ){
     fstream plik;
     string linia;
 
+
     plik.open("logi.txt",ios::in);
-    if ( plik.good() == false )
-        ofstream plik( "logi.txt" );
     while(getline(plik,linia)) {
         logowanie.id ++;
     }
@@ -70,11 +69,14 @@ int Zaloguj(vector <Logowanie> zalogowani, int idZalogowanego){
     else {
         for ( int i = 0; i < zalogowani.size(); i++) {
             if (zalogowani[i].login == login && zalogowani[i].haslo == haslo) {
+                idZalogowanego = zalogowani[i].id;
                 cout << "Logowanie pomyslne !"<<endl;
-                Sleep(5000);
+                Sleep(3000);
                 goto zalogowany;
-            } else
-                cout <<" Login lub haslo bledne. Wpisz poprawne dane "<<endl;
+            } else{
+                cout <<" Login lub haslo bledne. Wpisz poprawne dane. "<<endl;
+                Sleep(3000);
+            }
             }
         }
     }
@@ -177,6 +179,13 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
                     slowo = "";
                     numerSlowa++;
                     break;
+                case 6 :
+                    tymczasoweId = slowo ;
+                    id = atoi(tymczasoweId.c_str());
+                    uzytkownik.idLogujacego = id;
+                    slowo = "";
+                    numerSlowa++;
+                    break;
                 }
 
             }
@@ -189,7 +198,7 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy ) {
     plik.close();
 
 }
-void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy ) {
+void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy, int idZalogowanego ) {
 
     Uzytkownik uzytkownik;
 
@@ -222,6 +231,8 @@ void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy ) {
     cin.sync();
     getline(cin,uzytkownik.adres);
 
+    uzytkownik.idLogujacego = idZalogowanego;
+
     uzytkownicy.push_back( uzytkownik );
 
     fstream plik;
@@ -233,6 +244,7 @@ void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy ) {
     plik << uzytkownik.nrTelefonu<<"|";
     plik << uzytkownik.email<<"|";
     plik << uzytkownik.adres<<"|"<<endl;
+    plik << uzytkownik.idLogujacego<<"|"<<endl;
 
     plik.close();
 }
@@ -491,7 +503,7 @@ int main() {
         switch(wybor) {
         case '1':
             system("cls");
-            DodajUzytkownika(uzytkownicy);
+            DodajUzytkownika(uzytkownicy, idZalogowanego);
             break;
         case '2':
             system("cls");

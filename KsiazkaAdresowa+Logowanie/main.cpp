@@ -138,6 +138,8 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy, int idZalogowanego )
     fstream plik;
     string slowo;
 
+    uzytkownicy.clear();
+
     plik.open("baza.txt",ios::in);
     if ( plik.good() == false )
         ofstream plik( "baza.txt" );
@@ -481,7 +483,7 @@ void UsunUzytkownika (vector <Uzytkownik> &uzytkownicy){
     }
 
 }
-void MenuLogowania(vector <Logowanie> zalogowani, int idZalogowanego ){
+void MenuLogowania(vector <Logowanie> &zalogowani, int idZalogowanego ){
 
     char wybor;
 
@@ -499,6 +501,7 @@ void MenuLogowania(vector <Logowanie> zalogowani, int idZalogowanego ){
         case '1':
             system("cls");
             Zaloguj(zalogowani, idZalogowanego);
+            goto koniec;
             break;
         case '2':
             system("cls");
@@ -509,6 +512,8 @@ void MenuLogowania(vector <Logowanie> zalogowani, int idZalogowanego ){
             exit(0);
         }
     }
+    koniec:
+    cout<< "koniec";
 }
 int main() {
 
@@ -519,9 +524,10 @@ int main() {
 
 
     WczytajZalogowanych( zalogowani);
-    WczytajUzytkownikow(uzytkownicy, idZalogowanego);
     wylogowanie:
     MenuLogowania( zalogowani, idZalogowanego );
+    WczytajUzytkownikow(uzytkownicy, idZalogowanego);
+
     while(1) {
         system("cls");
         cout<<"Ksiazka adresowa v.0.0.4"<<endl;

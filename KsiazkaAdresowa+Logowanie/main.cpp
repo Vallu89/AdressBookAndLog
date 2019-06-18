@@ -9,12 +9,13 @@ using namespace std;
 
 struct Uzytkownik {
     int id = 0;
+    int idLogujacego = 0;
     string imie = "";
     string nazwisko = "";
     string nrTelefonu = "";
     string email = "";
     string adres = "";
-    int idLogujacego = 0;
+
 };
 struct Logowanie {
     int id = 1;
@@ -51,37 +52,37 @@ void Rejestracja( vector <Logowanie> &zalogowani ){
     plik.close();
 
 }
-int Zaloguj(vector <Logowanie> zalogowani, int idZalogowanego){
+int Zaloguj(vector <Logowanie> &zalogowani, int &idZalogowanego) {
 
     string login, haslo;
 
-    while(1){
-    system("cls");
-    cout << "Podaj login: "<<endl;
-    cin >> login;
-    cout << "Podaj haslo: "<<endl;
-    cin >>haslo;
+    while(1) {
+        system("cls");
+        cout << "Podaj login: "<<endl;
+        cin >> login;
+        cout << "Podaj haslo: "<<endl;
+        cin >>haslo;
 
-    if (zalogowani.size() == 0){
-        cout << "Brak zarejestrowanych uzytkownikow. Zarejestruj sie i sprobuj ponownie."<< endl;
-        Sleep(2000);
-    }
-    else {
-        for ( int i = 0; i < zalogowani.size(); i++) {
-            if (zalogowani[i].login == login && zalogowani[i].haslo == haslo) {
-                idZalogowanego = zalogowani[i].id;
-                cout << "Logowanie pomyslne !"<<endl;
-                Sleep(3000);
-                goto zalogowany;
-            } else{
-                cout <<" Login lub haslo bledne. Wpisz poprawne dane. "<<endl;
-                Sleep(3000);
+        if (zalogowani.size() == 0) {
+            cout << "Brak zarejestrowanych uzytkownikow. Zarejestruj sie i sprobuj ponownie."<< endl;
+            Sleep(2000);
+        } else {
+            for ( int i = 0; i < zalogowani.size(); i++) {
+                if (zalogowani[i].login == login && zalogowani[i].haslo == haslo) {
+                    idZalogowanego = zalogowani[i].id;
+                    cout << "Logowanie pomyslne !"<<endl;
+                    Sleep(3000);
+                    goto zalogowany;
+                }
             }
-            }
+            cout <<" Login lub haslo bledne. Wpisz poprawne dane. "<<endl;
+            Sleep(3000);
         }
     }
-    zalogowany:
-        return idZalogowanego;
+zalogowany:
+    cout << idZalogowanego;
+    system("pause");
+    return idZalogowanego;
 }
 void WczytajZalogowanych(vector <Logowanie> &zalogowani) {
 
@@ -144,8 +145,6 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy, int idZalogowanego )
     if ( plik.good() == false )
         ofstream plik( "baza.txt" );
     while(getline(plik,linia)) {
-        for (int k = 0 ; k < uzytkownicy.size(); k++) {
-            if (idZalogowanego == uzytkownicy[k].idLogujacego) {
                 for( int i = 0 ; i < linia.length() ; i++ ) {
                     if( linia[i] != '|')
                         slowo += linia[i];
@@ -159,34 +158,34 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy, int idZalogowanego )
                             numerSlowa++;
                             break;
                         case 1 :
+                            tymczasoweId = slowo ;
+                            id = atoi(tymczasoweId.c_str());
+                            uzytkownik.idLogujacego = id;
+                            slowo = "";
+                            numerSlowa++;
+                            break;
+                        case 2 :
                             uzytkownik.imie = slowo;
                             slowo = "";
                             numerSlowa++;
                             break;
-                        case 2:
+                        case 3:
                             uzytkownik.nazwisko = slowo;
                             slowo = "";
                             numerSlowa++;
                             break;
-                        case 3:
+                        case 4:
                             uzytkownik.nrTelefonu = slowo;
                             slowo = "";
                             numerSlowa++;
                             break;
-                        case 4:
+                        case 5:
                             uzytkownik.email = slowo;
                             slowo = "";
                             numerSlowa++;
                             break;
-                        case 5:
+                        case 6:
                             uzytkownik.adres = slowo;
-                            slowo = "";
-                            numerSlowa++;
-                            break;
-                        case 6 :
-                            tymczasoweId = slowo ;
-                            id = atoi(tymczasoweId.c_str());
-                            uzytkownik.idLogujacego = id;
                             slowo = "";
                             numerSlowa++;
                             break;
@@ -194,9 +193,10 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy, int idZalogowanego )
 
                     }
                 }
-            }
-        }
-        uzytkownicy.push_back( uzytkownik );
+
+        if (uzytkownik.idLogujacego == idZalogowanego)
+            uzytkownicy.push_back( uzytkownik );
+
         numerSlowa = 0;
 
     }
@@ -206,19 +206,15 @@ void WczytajUzytkownikow( vector <Uzytkownik> &uzytkownicy, int idZalogowanego )
 void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy, int idZalogowanego ) {
 
     Uzytkownik uzytkownik;
+    fstream plik;
+    string linia;
+    int noweIdUzytkownika=1;
 
-    if (uzytkownicy.size() == 0 ){
-        uzytkownik.id = 1;
-    }
-    else{
-        uzytkownik.id = uzytkownicy.size() + 1;
-        for (int i = 0; i < uzytkownicy.size(); i++){
-            if (uzytkownik.id < uzytkownicy[i].id){
-                uzytkownik.id = uzytkownicy[i].id;
-                uzytkownik.id++;
-            }
-        }
-    }
+    plik.open("baza.txt",ios::in);
+    while(getline(plik,linia))
+        noweIdUzytkownika++;
+    plik.close();
+
     cout<<"Podaj imie: ";
     cin>>uzytkownik.imie;
 
@@ -237,36 +233,45 @@ void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy, int idZalogowanego ) {
     getline(cin,uzytkownik.adres);
 
     uzytkownik.idLogujacego = idZalogowanego;
+    uzytkownik.id = noweIdUzytkownika;
 
     uzytkownicy.push_back( uzytkownik );
 
-    fstream plik;
+
     plik.open("baza.txt",ios::out | ios::app);
 
     plik << uzytkownik.id<< "|";
+    plik << uzytkownik.idLogujacego<<"|";
     plik << uzytkownik.imie<< "|";
     plik << uzytkownik.nazwisko<<"|";
     plik << uzytkownik.nrTelefonu<<"|";
     plik << uzytkownik.email<<"|";
     plik << uzytkownik.adres<<"|"<<endl;
-    plik << uzytkownik.idLogujacego<<"|"<<endl;
+
 
     plik.close();
 }
-void WyswietlUzytkownika( vector <Uzytkownik> uzytkownicy ) {
+void WyswietlUzytkownika( vector <Uzytkownik> uzytkownicy, int idZalogowanego ) {
+
+    cout << idZalogowanego <<endl;
+
+    system("pause");
+
     if (uzytkownicy.size() == 0 )
         cout <<"Brak uzytkownikow\n"<<endl;
     else
         for ( int i=0; i < uzytkownicy.size() ; i++ ) {
-
-            cout<< "-------------------------" << endl;
-            cout<< "Id: " << uzytkownicy[i].id << endl;
-            cout<< "Imie: " << uzytkownicy[i].imie << endl;
-            cout<< "Nazwisko: " << uzytkownicy[i].nazwisko << endl;
-            cout<< "Numer telefonu: " << uzytkownicy[i].nrTelefonu << endl;
-            cout<< "Email:" <<uzytkownicy[i].email << endl;
-            cout<< "Adres: " <<uzytkownicy[i].adres << endl;
-            cout<< "-------------------------" << endl;
+            cout << uzytkownicy[i].idLogujacego<<endl;
+            if (uzytkownicy[i].idLogujacego == idZalogowanego ) {
+                cout<< "-------------------------" << endl;
+                cout<< "Id: " << uzytkownicy[i].id << endl;
+                cout<< "Imie: " << uzytkownicy[i].imie << endl;
+                cout<< "Nazwisko: " << uzytkownicy[i].nazwisko << endl;
+                cout<< "Numer telefonu: " << uzytkownicy[i].nrTelefonu << endl;
+                cout<< "Email:" <<uzytkownicy[i].email << endl;
+                cout<< "Adres: " <<uzytkownicy[i].adres << endl;
+                cout<< "-------------------------" << endl;
+            }
         }
 
 }
@@ -483,10 +488,21 @@ void UsunUzytkownika (vector <Uzytkownik> &uzytkownicy){
     }
 
 }
-void MenuLogowania(vector <Logowanie> &zalogowani, int idZalogowanego ){
+void ZaktualizujBaze(){
+    Uzytkownik uzytkownik;
+    
+    
+}
+int main() {
 
     char wybor;
+    vector <Uzytkownik> uzytkownicy;
+    vector <Logowanie> zalogowani;
+    int idZalogowanego = 0;
 
+
+    WczytajZalogowanych( zalogowani);
+    wylogowanie:
     while(1) {
         system( "cls");
         cout<<"System logowania v.0.0.1"<<endl;
@@ -501,7 +517,9 @@ void MenuLogowania(vector <Logowanie> &zalogowani, int idZalogowanego ){
         case '1':
             system("cls");
             Zaloguj(zalogowani, idZalogowanego);
-            goto koniec;
+            cout << idZalogowanego;
+            system("pause");
+            goto doMenuKsiazkiAdresowej;
             break;
         case '2':
             system("cls");
@@ -512,20 +530,7 @@ void MenuLogowania(vector <Logowanie> &zalogowani, int idZalogowanego ){
             exit(0);
         }
     }
-    koniec:
-    cout<< "koniec";
-}
-int main() {
-
-    char wybor;
-    vector <Uzytkownik> uzytkownicy;
-    vector <Logowanie> zalogowani;
-    int idZalogowanego;
-
-
-    WczytajZalogowanych( zalogowani);
-    wylogowanie:
-    MenuLogowania( zalogowani, idZalogowanego );
+    doMenuKsiazkiAdresowej:
     WczytajUzytkownikow(uzytkownicy, idZalogowanego);
 
     while(1) {
@@ -550,7 +555,7 @@ int main() {
             break;
         case '2':
             system("cls");
-            WyswietlUzytkownika(uzytkownicy);
+            WyswietlUzytkownika(uzytkownicy, idZalogowanego);
             system("pause");
             break;
         case '3':

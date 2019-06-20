@@ -123,7 +123,7 @@ void ZaktualizujBaze(vector <Uzytkownik> &uzytkownicy) {
     remove( "baza.txt");
     rename("baza_temp.txt","baza.txt");
 }
-void UsunIZaktualizujBaze(vector <Uzytkownik> &uzytkownicy, int idUzytkownika) {
+void UsunIZaktualizujBaze(vector <Uzytkownik> &uzytkownicy, int idUzytkownika ) {
 
     Uzytkownik uzytkownik;
     bool czyJestWwektorze = false;
@@ -390,12 +390,26 @@ void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy, int idZalogowanego ) {
 
     Uzytkownik uzytkownik;
     fstream plik;
-    string linia;
-    int noweIdUzytkownika=1;
+    string linia, tymczasoweId, slowo = "";
+    int IdUzytkownika=1, id;
 
     plik.open("baza.txt",ios::in);
-    while(getline(plik,linia))
-        noweIdUzytkownika++;
+    if ( plik.good() == false )
+        ofstream plik( "baza.txt" );
+    while(getline(plik,linia)) {
+        int numerLitery = 0;
+
+        while ( linia[numerLitery] != '|'){
+            slowo += linia[numerLitery];
+            numerLitery++;
+        }
+
+        tymczasoweId = slowo ;
+        id = atoi(tymczasoweId.c_str());
+        slowo = "";
+        if ( IdUzytkownika < id )
+            IdUzytkownika = id;
+    }
     plik.close();
 
     cout<<"Podaj imie: ";
@@ -416,7 +430,7 @@ void DodajUzytkownika( vector <Uzytkownik> &uzytkownicy, int idZalogowanego ) {
     getline(cin,uzytkownik.adres);
 
     uzytkownik.idLogujacego = idZalogowanego;
-    uzytkownik.id = noweIdUzytkownika;
+    uzytkownik.id = ++IdUzytkownika;
 
     uzytkownicy.push_back( uzytkownik );
 
@@ -440,7 +454,6 @@ void WyswietlUzytkownika( vector <Uzytkownik> uzytkownicy, int idZalogowanego ) 
         cout <<"Brak uzytkownikow\n"<<endl;
     else
         for ( int i=0; i < uzytkownicy.size() ; i++ ) {
-            cout << uzytkownicy[i].idLogujacego<<endl;
             if (uzytkownicy[i].idLogujacego == idZalogowanego ) {
                 cout<< "-------------------------" << endl;
                 cout<< "Id: " << uzytkownicy[i].id << endl;
@@ -581,23 +594,30 @@ void EdytujUzytkownika ( vector <Uzytkownik> &uzytkownicy ){
         }
     }
 }
-void UsunUzytkownika (vector <Uzytkownik> &uzytkownicy){
+void UsunUzytkownika (vector <Uzytkownik> &uzytkownicy, int idZalogowanego) {
 
     int idUzytkownika;
     char wybor;
+    bool czyNalezyDoAdresowZalogowanego = false;
 
     cout << "Podaj id uzytkownika, ktorego chcesz usunac : ";
     cin >> idUzytkownika;
     cout << "Wybrales/as uzytkownika o id "<< idUzytkownika << ". Czy na pewno chcesz usunac dane o tej osobie ?"<<endl;
     cout << "(Jesli tak, wpisz 't'. Wpisujac cos innego zostaniesz przeniesiony do menu glownego"<<endl;
     cin >> wybor;
-    if ( wybor == 't' ){
-        for ( int i = 0; i < uzytkownicy.size(); i++ ){
-            if ( uzytkownicy[i].id == idUzytkownika ){
-               uzytkownicy.erase (uzytkownicy.begin() + i);
+    if ( wybor == 't' ) {
+        for ( int i = 0; i < uzytkownicy.size(); i++ ) {
+            if ( uzytkownicy[i].id == idUzytkownika ) {
+                if ( uzytkownicy[i].idLogujacego == idZalogowanego ) {
+                    uzytkownicy.erase (uzytkownicy.begin() + i);
+                    UsunIZaktualizujBaze( uzytkownicy, idUzytkownika);
+                } else {
+                    cout<< "Nie mozna usunac uzytkownika o wybranym id. Dane naleza do innego loginu" << endl;
+                    system("pause");
+                }
             }
         }
-      UsunIZaktualizujBaze( uzytkownicy, idUzytkownika);
+
     }
 
 }
@@ -626,8 +646,6 @@ int main() {
         case '1':
             system("cls");
             Zaloguj(zalogowani, idZalogowanego);
-            cout << idZalogowanego;
-            system("pause");
             goto doMenuKsiazkiAdresowej;
             break;
         case '2':
@@ -640,7 +658,7 @@ int main() {
         }
     }
     doMenuKsiazkiAdresowej:
-    WczytajUzytkownikow(uzytkownicy, idZalogowanego);
+    WczytajUzytkownikow(uzytkownicy, idZalogowanego );
 
     while(1) {
         system("cls");
@@ -660,24 +678,24 @@ int main() {
         switch(wybor) {
         case '1':
             system("cls");
-            DodajUzytkownika(uzytkownicy, idZalogowanego);
+            DodajUzytkownika( uzytkownicy, idZalogowanego );
             break;
         case '2':
             system("cls");
-            WyswietlUzytkownika(uzytkownicy, idZalogowanego);
+            WyswietlUzytkownika( uzytkownicy, idZalogowanego );
             system("pause");
             break;
         case '3':
             system("cls");
-            WyszukajUzytkownika(uzytkownicy);
+            WyszukajUzytkownika( uzytkownicy );
             break;
         case '4':
             system("cls");
-            EdytujUzytkownika(uzytkownicy);
+            EdytujUzytkownika( uzytkownicy );
             break;
         case '5':
             system("cls");
-            UsunUzytkownika(uzytkownicy);
+            UsunUzytkownika( uzytkownicy, idZalogowanego );
             break;
          case '6':
             system("cls");
